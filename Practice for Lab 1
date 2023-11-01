@@ -1,0 +1,18 @@
+install.packages(pkgs=c('urltools')) #this is the library I will need to use
+View(lab_1_data_2) #to open the file I want to work with
+headlines = read.csv('lab_1_data-2.csv',header=TRUE) #put varioables in the header, and read the scv file
+headlines$title = url_decode(headlines$title) #to make the headlies more easier to read, decode the url
+table(headlines$source) #how many of each 
+headlines$num_chars = nchar(headlines$title) #how many character the title
+hist(headlines$num_chars [headlines$source == "New York Times"]) #make histograms
+hist(headlines$num_chars [headlines$source == "Business Insider"])
+summary(headlines$num_chars [headlines$source == "New York Times"]) #to summerize the dataset
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    9.0    48.0    59.0    56.8    67.0   205.0 
+summary(headlines$num_chars [headlines$source == "Business Insider"])
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   14.0    92.0   115.0   115.3   138.0   251.0 
+headlines$num_words = headlines$num_chars - nchar(gsub(' ','',headlines$title))+1 #formula for figuring out how many words in the title
+> nyt = headlines[headlines$source=='New York Times',]
+> biz = headlines[headlines$source=='Business Insider',]
+> t.test(nyt$num_words,biz$num_words) #running a t test to compare the two datasets how many words they have in the title
