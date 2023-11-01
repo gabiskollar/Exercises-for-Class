@@ -1,0 +1,38 @@
+# install.packages('igraph')
+# install.packages('scales')
+library(igraph)
+library(scales)
+source('functions.R')
+n_agents = 20
+influence_rate = 1 # information "impulse" between agents
+have_info = n_agents*.3 #how many agent have the info at the beginning
+connectedness = 1 #proportion network that stays connected
+rounds_of_interaction = n_agents*20 #number of pairwise converstions
+agent_states[sample(1:n_agents,have_info)] = 1 #randomly pick who has the info
+connection_matrix = make_connections(n_agents,n_delete=n_delete,type='circle')
+connection_matrix[1,3] = 1 # make a long range (a 'hub') between agents, you can make a couple of these
+connection_matrix[1,3] = 0 #to delete the hub between the agents
+edge_list = which(connection_matrix>0,arr.ind=TRUE) #not sure what this does, but it's important
+history = run_model(agent_states=agent_states,
+                    edge_list=edge_list,
+                    rounds_of_interaction=rounds_of_interaction,
+                    influence_rate=influence_rate)
+colors = alpha(rainbow(n_agents),.25) #add colors to our plotts
+par(mfrow=c(2,2))
+
+plot_graph(connection_matrix,history[1,],colors) 
+plot_graph(connection_matrix,history[nrow(history),],colors) 
+
+plot_history(history,colors=colors,line_width=3,
+             line_type='l',y_axis_range=c(0,1))
+plot(rowMeans(history),type='l',ylim=c(0,1),
+     xlab='Iteration',ylab='Average state')
+n_delete = round((1-connectedness)*n_agents^2)#delete connections and start over with other settings
+connectedness = 3 #made changes on the connectednes
+have_info = n_agents*.3 #left it unchanged
+
+agent_states[sample(1:n_agents,have_info)] = 1 #randomly pick who has the info
+history = run_model(agent_states=agent_states,
++                     edge_list=edge_list,
++                     rounds_of_interaction=rounds_of_interaction,
++                     influence_rate=influence_rate)
